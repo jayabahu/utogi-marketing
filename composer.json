@@ -1,0 +1,11 @@
+{
+  "autoload": {
+    "psr-4": {
+      "UtogiMarketing\\": "src/"
+    },
+    "files": [
+      "src/View/settings.php",
+      "src/client.php"
+    ]
+  }
+}
