@@ -38,3 +38,13 @@ register_activation_hook( __FILE__, 'activate_utogi_marketing' );
 
 $initializer = new Initializer();
 $initializer();
+
+if( ! class_exists( 'UtogiMarketingUpdater' ) ){
+	include_once( plugin_dir_path( __FILE__ ) . 'updater.php' );
+}
+
+$updater = new UtogiMarketingUpdater( __FILE__ );
+$updater->set_username( 'jayabahu' );
+$updater->set_repository( 'utogi-marketing' );
+
+$updater->initialize();
