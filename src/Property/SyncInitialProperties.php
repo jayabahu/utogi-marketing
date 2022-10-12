@@ -16,16 +16,16 @@ class SyncInitialProperties
     private function getPropertyQuery() {
         return <<<'JSON'
         {
-       marketing {
-        campaigns(type: PROPERTY, pagination: {page: 1, perPage: 100}) {
-            data {
+          marketing {
+            campaigns(type: PROPERTY, pagination: { page: 1, perPage: 100 }) {
+              data {
                 id
                 name
                 status
                 address
                 video
                 referenceId
-                users{ 
+                users {
                   email
                   isActive
                 }
@@ -78,7 +78,10 @@ class SyncInitialProperties
                     lng
                   }
                 }
-                providerCampaigns(pagination: { perPage: 1, page: 1 }, filters: { provider: WEBSITE }) {
+                providerCampaigns(
+                  pagination: { perPage: 1, page: 1 }
+                  filters: { provider: WEBSITE }
+                ) {
                   data {
                     websiteAd {
                       propertyDetails {
@@ -103,11 +106,11 @@ class SyncInitialProperties
                     }
                   }
                 }
+              }
             }
+          }
         }
-      }
-    }
-JSON;
+        JSON;
     }
 
     private function updatePropertyLink($postId, $campaignId) {
@@ -289,10 +292,11 @@ JSON;
             $stage = 'archived';
         }
 
+        list($title) = $this->getAdvertisingText($activeCampaign);
 
         update_post_meta($id, 'utogiId', $activeCampaign['referenceId']);
         update_post_meta($id, 'utogiInternalId', $activeCampaign['id']);
-
+        update_post_meta($id, 'propertyTitle', $title);
 
         update_post_meta($id, 'stage', $stage);
         update_post_meta($id, 'status', $status);

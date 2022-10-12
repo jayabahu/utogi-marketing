@@ -1,29 +1,11 @@
 <?php
 
 function getUtogiAPIURL() {
-    if (ENV === 'development') {
-        return API_URL_LOCAL;
-    }
-
-    if (ENV === 'uat') {
-        return API_URL_SANDBOX;
-    }
-
     return API_URL_LIVE;
-
 }
 
 function getImageUrl() {
-    if (ENV === 'development') {
-        return UTOGI_IMAGE_URL_LOCAL;
-    }
-
-    if (ENV === 'uat') {
-        return UTOGI_IMAGE_URL_SANDBOX;
-    }
-
     return UTOGI_IMAGE_URL_LIVE;
-
 }
 
 function query(string $query, array $variables = [], ?string $token = null): array

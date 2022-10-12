@@ -4,7 +4,7 @@
  * Plugin Name:     Utogi Marketing
  * Description:     This plugin will help to integrate with marketing module
  * Text Domain:     utogi-marketing
- * Version:         1.1.0
+ * Version:         1.1.1
  *
  * @package         Utogi_Marketing
  */
