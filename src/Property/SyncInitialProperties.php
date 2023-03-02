@@ -259,7 +259,7 @@ JSON;
           if (!$websiteAd) {
             return;
         }
-          if (!in_array($activeCampaign['status'], ['ACTIVATED', 'SOLD', 'WITHDRAWN', 'ARCHIVED']) ) {
+          if (!in_array($activeCampaign['status'], ['ON_THE_MARKET', 'UNDER_CONTRACT', 'SOLD', 'WITHDRAWN', 'ARCHIVED']) ) {
               return;
           }
 
@@ -547,7 +547,7 @@ JSON;
         $id = null;
         list($title, $description, $webAddress) = $this->getAdvertisingText($activeCampaign);
 
-        $status = $activeCampaign['status'] === "ACTIVATED" ? 'publish' : 'trash';
+        $status = in_array($activeCampaign['status'], ['ON_THE_MARKET', 'UNDER_CONTRACT']) ? 'publish' : 'trash';
 
         $args = [
             'posts_per_page' => 1,
