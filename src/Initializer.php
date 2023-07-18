@@ -38,24 +38,28 @@ class Initializer
         // Action on activation
     }
 
-    public function initWebhook() {
-        register_rest_route( 'utogi/v1', '/sync', array(
+    public function initWebhook()
+    {
+        register_rest_route('utogi/v1', '/sync', array(
             'methods' => 'POST',
             'callback' => [$this->syncInitialProperties, 'updateProperty'],
-        ) );
+        )
+        );
     }
 
-    private function registerActions() {
+    private function registerActions()
+    {
         $this->loader->addAction('admin_init', $this->uIInitializer, "__invoke");
         //$this->loader->addAction('init', $this->propertyType, "initPropertyPostType");
         $this->loader->addAction('add_meta_boxes', $this->propertyType, "initCustomField");
 
-        $this->loader->addAction( 'admin_menu', $this->uIInitializer, "createMenu");
-        $this->loader->addAction( 'rest_api_init', $this, "initWebhook");
+        $this->loader->addAction('admin_menu', $this->uIInitializer, "createMenu");
+        $this->loader->addAction('rest_api_init', $this, "initWebhook");
     }
 
-    private function registerFilters() {
-        $this->loader->addFilter( 'sync_initial_properties', $this->syncInitialProperties, "__invoke");
+    private function registerFilters()
+    {
+        $this->loader->addFilter('sync_initial_properties', $this->syncInitialProperties, "__invoke");
     }
 
     public function __invoke()

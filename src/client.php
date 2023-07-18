@@ -1,10 +1,12 @@
 <?php
 
-function getUtogiAPIURL() {
+function getUtogiAPIURL()
+{
     return API_URL_LIVE;
 }
 
-function getImageUrl() {
+function getImageUrl()
+{
     return UTOGI_IMAGE_URL_LIVE;
 }
 
@@ -30,13 +32,14 @@ function httpClient(?string $token, $json): array
         $headers[] = "Authorization: $token";
     }
 
-
     $chObj = curl_init();
     curl_setopt($chObj, CURLOPT_URL, getUtogiAPIURL());
     curl_setopt($chObj, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($chObj, CURLOPT_CUSTOMREQUEST, 'POST');
     curl_setopt($chObj, CURLOPT_POSTFIELDS, $json);
-    curl_setopt($chObj, CURLOPT_HTTPHEADER,
+    curl_setopt(
+        $chObj,
+        CURLOPT_HTTPHEADER,
         array(
             'User-Agent: utogi/wp',
             'Content-Type: application/json;charset=utf-8',
