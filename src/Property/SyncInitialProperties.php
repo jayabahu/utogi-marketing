@@ -16,103 +16,103 @@ class SyncInitialProperties
   private function getPropertyQuery()
   {
     return <<<'JSON'
-      {
-        marketing {
-          campaigns(type: PROPERTY, pagination: { page: 1, perPage: 100 }) {
-            data {
-              id
-              name
-              status
-              address
-              video
-              referenceId
-              users {
-                email
-                isActive
-              }
-              advertising {
-                priceDetails {
-                  content
+        {
+          marketing {
+            campaigns(type: PROPERTY, pagination: { page: 1, perPage: 100 }) {
+              data {
+                id
+                name
+                status
+                address
+                video
+                referenceId
+                users {
+                  email
+                  isActive
                 }
-                bodies {
-                  provider
-                  content
+                advertising {
+                  priceDetails {
+                    content
+                  }
+                  bodies {
+                    provider
+                    content
+                  }
+                  headings {
+                    provider
+                    content
+                  }
+                  webAddress {
+                    provider
+                    content
+                  }
+                  openHomes {
+                    content
+                  }
                 }
-                headings {
-                  provider
-                  content
+                property {
+                  bathroom
+                  category
+                  type
+                  landArea
+                  floorArea
+                  bedroom
+                  livingRoom
+                  bathroom
+                  ensuites
+                  totalBathroom
+                  dining
+                  garage
+                  carport
+                  offStreetPark
+                  floor
+                  titleType
+                  lot
+                  titleNumber
+                  dp
+                  fullDescription
+                  localAuthority
+                  rates
+                  zoning
+                  yearBuilt
+                  coordinates {
+                    lat
+                    lng
+                  }
                 }
-                webAddress {
-                  provider
-                  content
-                }
-                openHomes {
-                  content
-                }
-              }
-              property {
-                bathroom
-                category
-                type
-                landArea
-                floorArea
-                bedroom
-                livingRoom
-                bathroom
-                ensuites
-                totalBathroom
-                dining
-                garage
-                carport
-                offStreetPark
-                floor
-                titleType
-                lot
-                titleNumber
-                dp
-                fullDescription
-                localAuthority
-                rates
-                zoning
-                yearBuilt
-                coordinates {
-                  lat
-                  lng
-                }
-              }
-              providerCampaigns(
-                pagination: { perPage: 1, page: 1 }
-                filters: { provider: OFFICE_WEBSITE }
-              ) {
-                data {
-                  websiteAd {
-                    propertyDetails {
-                      streetName
-                      streetNumber
-                      unit
-                      suburb
-                      region
-                      city
-                      country
-                    }
-                    gallery {
-                      images {
+                providerCampaigns(
+                  pagination: { perPage: 1, page: 1 }
+                  filters: { provider: PERSONAL_WEBSITE }
+                ) {
+                  data {
+                    websiteAd {
+                      propertyDetails {
+                        streetName
+                        streetNumber
+                        unit
+                        suburb
+                        region
+                        city
+                        country
+                      }
+                      gallery {
+                        images {
+                          originalUrl
+                        }
+                      }
+                      featuredImages {
                         originalUrl
                       }
+                      feature
+                      standard
                     }
-                    featuredImages {
-                      originalUrl
-                    }
-                    feature
-                    standard
                   }
                 }
               }
             }
           }
         }
-      }
-      JSON;
+        JSON;
   }
 
   private function updatePropertyLink($postId, $campaignId)
@@ -127,12 +127,12 @@ class SyncInitialProperties
     }
     JSON;
 
-    mutation($mutation, [], get_option('utogi_marketing-api-key'));
+    mutation($mutation, [], get_option('utogi-api-key'));
   }
 
   private function initialSyncing()
   {
-    $result = query($this->getPropertyQuery(), [], get_option('utogi_marketing-api-key'));
+    $result = query($this->getPropertyQuery(), [], get_option('utogi-api-key'));
     $activeCampaigns = $result['data']['marketing']['campaigns']['data'];
 
     foreach ($activeCampaigns as $activeCampaign) {
@@ -153,108 +153,101 @@ class SyncInitialProperties
   private function syncSingleProperty($id)
   {
     $query = <<<JSON
-    {
-      marketing {
-        campaigns(
-          ids: ["$id"]
-          type: PROPERTY
-          pagination: { page: 1, perPage: 100 }
-        ) {
-          data {
-            id
-            name
-            status
-            address
-            video
-            referenceId
-            users {
-              email
-              isActive
-            }
-            advertising {
-              priceDetails {
-                content
-              }
-              bodies {
-                provider
-                content
-              }
-              headings {
-                provider
-                content
-              }
-              openHomes {
-                content
-              }
-              webAddress {
-                provider
-                content
-              }
-            }
-            property {
-              bathroom
-              category
-              type
-              landArea
-              floorArea
-              bedroom
-              livingRoom
-              bathroom
-              ensuites
-              totalBathroom
-              dining
-              garage
-              carport
-              offStreetPark
-              floor
-              titleType
-              lot
-              titleNumber
-              dp
-              fullDescription
-              localAuthority
-              rates
-              zoning
-              yearBuilt
-              coordinates {
-                lat
-                lng
-              }
-            }
-            providerCampaigns(
-              pagination: { perPage: 1, page: 1 }
-              filters: { provider: OFFICE_WEBSITE }
-            ) {
-              data {
-                websiteAd {
-                  propertyDetails {
-                    streetName
-                    streetNumber
-                    unit
-                    suburb
-                    region
-                    city
-                    country
+        {
+        marketing {
+        campaigns(ids: ["$id"],type: PROPERTY, pagination: {page: 1, perPage: 100}) {
+            data {
+                id
+                name
+                status
+                address
+                video
+                referenceId
+                users{ 
+                  email
+                  isActive
+                }
+                advertising {
+                  priceDetails {
+                    content
                   }
-                  gallery {
-                    images {
-                      originalUrl
+                  bodies {
+                    provider
+                    content
+                  }
+                  headings {
+                    provider
+                    content
+                  }
+                  openHomes {
+                    content
+                  }
+                  webAddress{
+                    provider
+                    content
+                  }
+                }
+                property {
+                  bathroom
+                  category
+                  type
+                  landArea
+                  floorArea
+                  bedroom
+                  livingRoom
+                  bathroom
+                  ensuites
+                  totalBathroom
+                  dining
+                  garage
+                  carport
+                  offStreetPark
+                  floor
+                  titleType
+                  lot
+                  titleNumber
+                  dp
+                  fullDescription
+                  localAuthority
+                  rates
+                  zoning
+                  yearBuilt
+                  coordinates {
+                    lat
+                    lng
+                  }
+                }
+                providerCampaigns(pagination: { perPage: 1, page: 1 }, filters: { provider: PERSONAL_WEBSITE }) {
+                  data {
+                    websiteAd {
+                      propertyDetails {
+                        streetName
+                        streetNumber
+                        unit
+                        suburb
+                        region
+                        city
+                        country
+                      }
+                      gallery {
+                        images {
+                          originalUrl
+                        }
+                      }
+                      featuredImages {
+                        originalUrl
+                      }
+                      feature
+                      standard
                     }
                   }
-                  featuredImages {
-                    originalUrl
-                  }
-                  feature
-                  standard
                 }
-              }
             }
-          }
         }
       }
     }
     JSON;
-    $result = query($query, [], get_option('utogi_marketing-api-key'));
+    $result = query($query, [], get_option('utogi-api-key'));
     $activeCampaigns = $result['data']['marketing']['campaigns']['data'];
 
     foreach ($activeCampaigns as $activeCampaign) {
@@ -332,39 +325,16 @@ class SyncInitialProperties
     }
 
     if (($activeCampaign['status'] == 'sold') || !$websiteAd['feature']) {
-      if (tag_exists('featured'))
+      if (term_exists('featured'))
         wp_remove_object_terms($id, 'featured', 'post_tag');
     }
     $this->syncPriceDetails($id, $activeCampaign);
     $this->syncAddress($id, $activeCampaign);
     $this->syncPropertyInformation($id, $activeCampaign['property']);
 
-    $this->syncAgents($activeCampaign, $id);
     $this->syncImages($activeCampaign, $id);
     if ($status === 'activated') {
       $this->updatePropertyLink($id, $activeCampaign['id']);
-    }
-  }
-
-  private function syncAgents($activeCampaign, $id): void
-  {
-    $users = $activeCampaign['users'];
-
-    if (!empty($users)) {
-      $agents = [];
-      foreach ($users as $user) {
-        if ($user['isActive']) {
-          $agents[] = $user['email'];
-        }
-      }
-
-      if (!empty($agents)) {
-        $agentIds = [];
-        foreach ($agents as $agent) {
-          $agentIds[] = $this->getAgentId($agent);
-        }
-        update_post_meta($id, 'agentIDs', implode(',', $agentIds));
-      }
     }
   }
 
@@ -423,25 +393,27 @@ class SyncInitialProperties
       if (!$heading['provider']) {
         $defaultTitle = $heading['content'];
       }
-      if ($heading['provider'] === 'OFFICE_WEBSITE') {
+      if ($heading['provider'] === 'PERSONAL_WEBSITE') {
         $title = $heading['content'];
       }
     }
+
 
     foreach ($text['webAddress'] as $address) {
       if (!$address['provider']) {
         $defaultWebAddress = $address['content'];
       }
-      if ($address['provider'] === 'OFFICE_WEBSITE') {
+      if ($address['provider'] === 'PERSONAL_WEBSITE') {
         $webAddress = $address['content'];
       }
     }
+
 
     foreach ($text['bodies'] as $body) {
       if (!$body['provider']) {
         $defaultDescription = nl2br($body['content']);
       }
-      if ($body['provider'] === 'OFFICE_WEBSITE') {
+      if ($body['provider'] === 'PERSONAL_WEBSITE') {
         $defaultDescription = $body['content'];
       }
     }
@@ -576,27 +548,5 @@ class SyncInitialProperties
         "post_name" => $webAddress,
       )
     );
-  }
-
-  /**
-   * @param $agent
-   * @return int
-   */
-  private function getAgentId($agent)
-  {
-    $args = [
-      'posts_per_page' => -1,
-      'post_type' => 'agent',
-      'meta_query' => [
-        'relation' => 'AND',
-        [
-          'key' => 'email',
-          'value' => $agent,
-          'compare' => 'LIKE'
-        ],
-      ]
-    ];
-    [$data] = query_posts($args);
-    return $data->ID;
   }
 }

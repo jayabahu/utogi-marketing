@@ -24,7 +24,7 @@ class APIValidator
 
         if (!$result['data']['marketing']) {
             add_settings_error(
-                'utogi_marketing-api-key',
+                'utogi-api-key',
                 // whatever you registered in `register_setting
                 'a_code_here',
                 // doesn't really mater

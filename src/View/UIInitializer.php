@@ -29,8 +29,8 @@ class UIInitializer
 
     public function __invoke()
     {
-        register_setting('utogi_settings', 'utogi_marketing-api-key', $this->validateApiToken);
-        register_setting('utogi_settings', 'utogi_marketing-is-sandbox');
+        register_setting('utogi_settings', 'utogi-api-key', $this->validateApiToken);
+        register_setting('utogi_settings', 'utogi-is-sandbox');
     }
 
 }
