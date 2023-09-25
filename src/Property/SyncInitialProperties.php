@@ -82,7 +82,7 @@ class SyncInitialProperties
               }
               providerCampaigns(
                 pagination: { perPage: 1, page: 1 }
-                filters: { provider: OFFICE_WEBSITE }
+                filters: { provider: WEBSITE }
               ) {
                 data {
                   websiteAd {
@@ -223,7 +223,7 @@ class SyncInitialProperties
             }
             providerCampaigns(
               pagination: { perPage: 1, page: 1 }
-              filters: { provider: OFFICE_WEBSITE }
+              filters: { provider: WEBSITE }
             ) {
               data {
                 websiteAd {
@@ -286,7 +286,7 @@ class SyncInitialProperties
       $stage = 'withdrawn';
     }
 
-    if ($activeCampaign['status'] === 'WITHDRAWN') {
+    if (in_array($activeCampaign['status'], ['WITHDRAWN_FROM_ON_THE_MARKET', 'WITHDRAWN_FROM_SOLD', 'WITHDRAWN_FROM_UNDER_CONTRACT'])) {
       $status = 'withdrawn';
       $stage = 'withdrawn';
     }
@@ -423,7 +423,7 @@ class SyncInitialProperties
       if (!$heading['provider']) {
         $defaultTitle = $heading['content'];
       }
-      if ($heading['provider'] === 'OFFICE_WEBSITE') {
+      if ($heading['provider'] === 'WEBSITE') {
         $title = $heading['content'];
       }
     }
@@ -432,7 +432,7 @@ class SyncInitialProperties
       if (!$address['provider']) {
         $defaultWebAddress = $address['content'];
       }
-      if ($address['provider'] === 'OFFICE_WEBSITE') {
+      if ($address['provider'] === 'WEBSITE') {
         $webAddress = $address['content'];
       }
     }
@@ -441,7 +441,7 @@ class SyncInitialProperties
       if (!$body['provider']) {
         $defaultDescription = nl2br($body['content']);
       }
-      if ($body['provider'] === 'OFFICE_WEBSITE') {
+      if ($body['provider'] === 'WEBSITE') {
         $defaultDescription = $body['content'];
       }
     }

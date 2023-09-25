@@ -3,7 +3,7 @@
  * Plugin Name:     Utogi Marketing
  * Description:     This plugin will help to integrate with marketing module
  * Text Domain:     utogi-marketing
- * Version:         1.1.1
+ * Version:         1.1.4
  *
  * @package         Utogi_Marketing
  */
@@ -14,7 +14,7 @@ if (!defined('WPINC')) {
     die;
 }
 
-define('UTOGI_MARKETING_VERSION', '1.0.0');
+define('UTOGI_MARKETING_VERSION', '1.1.4');
 
 require plugin_dir_path(__FILE__) . 'vendor/autoload.php';
 
