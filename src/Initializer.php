@@ -49,7 +49,6 @@ class Initializer
         register_rest_route('utogi/v1', '/sync', array(
             'methods' => 'POST',
             'callback' => [$this->syncInitialProperties, 'updateProperty'],
-            'permission_callback' => '__return_true'
         )
         );
     }
@@ -57,7 +56,7 @@ class Initializer
     private function registerActions()
     {
         $this->loader->addAction('admin_init', $this->uIInitializer, "__invoke");
-        //$this->loader->addAction('init', $this->propertyType, "initPropertyPostType");
+        $this->loader->addAction('init', $this->propertyType, "initPropertyPostType");
         $this->loader->addAction('add_meta_boxes', $this->propertyType, "initCustomField");
 
         $this->loader->addAction('admin_menu', $this->uIInitializer, "createMenu");

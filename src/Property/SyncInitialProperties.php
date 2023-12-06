@@ -94,7 +94,7 @@ class SyncInitialProperties
               }
               providerCampaigns(
                 pagination: { perPage: 1, page: 1 }
-                filters: { provider: OFFICE_WEBSITE }
+                filters: { provider: PERSONAL_WEBSITE }
               ) {
                 data {
                   websiteAd {
@@ -244,7 +244,7 @@ class SyncInitialProperties
             }
             providerCampaigns(
               pagination: { perPage: 1, page: 1 }
-              filters: { provider: OFFICE_WEBSITE }
+              filters: { provider: PERSONAL_WEBSITE }
             ) {
               data {
                 websiteAd {
@@ -380,32 +380,9 @@ class SyncInitialProperties
     $this->syncDocuments($id, $activeCampaign['marketingDocuments'], $title, $activeCampaign['id']);
 
 
-    $this->syncAgents($activeCampaign, $id);
     $this->syncImages($activeCampaign, $id);
     if ($status === 'activated') {
       $this->updatePropertyLink($id, $activeCampaign['id']);
-    }
-  }
-
-  private function syncAgents($activeCampaign, $id): void
-  {
-    $users = $activeCampaign['users'];
-
-    if (!empty($users)) {
-      $agents = [];
-      foreach ($users as $user) {
-        if ($user['isActive']) {
-          $agents[] = $user['email'];
-        }
-      }
-
-      if (!empty($agents)) {
-        $agentIds = [];
-        foreach ($agents as $agent) {
-          $agentIds[] = $this->getAgentId($agent);
-        }
-        update_post_meta($id, 'agentIDs', implode(',', $agentIds));
-      }
     }
   }
 
@@ -466,7 +443,7 @@ class SyncInitialProperties
       if (!$heading['provider']) {
         $defaultTitle = $heading['content'];
       }
-      if ($heading['provider'] === 'OFFICE_WEBSITE') {
+      if ($heading['provider'] === 'PERSONAL_WEBSITE') {
         $title = $heading['content'];
       }
     }
@@ -475,7 +452,7 @@ class SyncInitialProperties
       if (!$address['provider']) {
         $defaultWebAddress = $address['content'];
       }
-      if ($address['provider'] === 'OFFICE_WEBSITE') {
+      if ($address['provider'] === 'PERSONAL_WEBSITE') {
         $webAddress = $address['content'];
       }
     }
@@ -484,7 +461,7 @@ class SyncInitialProperties
       if (!$body['provider']) {
         $defaultDescription = nl2br($body['content']);
       }
-      if ($body['provider'] === 'OFFICE_WEBSITE') {
+      if ($body['provider'] === 'PERSONAL_WEBSITE') {
         $defaultDescription = $body['content'];
       }
     }
@@ -669,27 +646,5 @@ class SyncInitialProperties
         "post_name" => $webAddress,
       )
     );
-  }
-
-  /**
-   * @param $agent
-   * @return int
-   */
-  private function getAgentId($agent)
-  {
-    $args = [
-      'posts_per_page' => -1,
-      'post_type' => 'agent',
-      'meta_query' => [
-        'relation' => 'AND',
-        [
-          'key' => 'email',
-          'value' => $agent,
-          'compare' => 'LIKE'
-        ],
-      ]
-    ];
-    [$data] = query_posts($args);
-    return $data->ID;
   }
 }
