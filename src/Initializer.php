@@ -3,6 +3,7 @@
 namespace UtogiMarketing;
 
 use UtogiMarketing\Property\SyncInitialProperties;
+use UtogiMarketing\Campaign\CampaignDocuments;
 use UtogiMarketing\View\UIInitializer;
 
 class Initializer
@@ -24,6 +25,10 @@ class Initializer
      * @var SyncInitialProperties
      */
     private $syncInitialProperties;
+      /**
+     * @var CampaignDocuments
+     */
+    private $campaignDocuments;
 
     public function __construct()
     {
@@ -31,6 +36,7 @@ class Initializer
         $this->uIInitializer = new UIInitializer();
         $this->propertyType = new PropertyType();
         $this->syncInitialProperties = new SyncInitialProperties();
+        $this->campaignDocuments = new CampaignDocuments();
     }
 
     public static function onActivation()
@@ -43,6 +49,7 @@ class Initializer
         register_rest_route('utogi/v1', '/sync', array(
             'methods' => 'POST',
             'callback' => [$this->syncInitialProperties, 'updateProperty'],
+            'permission_callback' => '__return_true'
         )
         );
     }
@@ -55,6 +62,8 @@ class Initializer
 
         $this->loader->addAction('admin_menu', $this->uIInitializer, "createMenu");
         $this->loader->addAction('rest_api_init', $this, "initWebhook");
+        $this->loader->addAction('wp_ajax_call_add_download_contact_handler', $this->campaignDocuments, "addDownloadedContact");
+        $this->loader->addAction('wp_ajax_nopriv_call_add_download_contact_handler', $this->campaignDocuments, "addDownloadedContact");
     }
 
     private function registerFilters()

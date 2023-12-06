@@ -2,12 +2,12 @@
 
 function getUtogiAPIURL()
 {
-    return API_URL_LIVE;
+    return API_URL;
 }
 
 function getImageUrl()
 {
-    return UTOGI_IMAGE_URL_LIVE;
+    return UTOGI_IMAGE_URL;
 }
 
 function query(string $query, array $variables = [], ?string $token = null): array

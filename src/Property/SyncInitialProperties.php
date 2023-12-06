@@ -5,6 +5,18 @@ namespace UtogiMarketing\Property;
 use WP_Query;
 use WP_REST_Request;
 
+class DocumentGroup
+{
+  public $name;
+  public $documents;
+}
+class Document
+{
+  public $name;
+  public $url;
+
+}
+
 class SyncInitialProperties
 {
 
@@ -82,7 +94,7 @@ class SyncInitialProperties
               }
               providerCampaigns(
                 pagination: { perPage: 1, page: 1 }
-                filters: { provider: WEBSITE }
+                filters: { provider: OFFICE_WEBSITE }
               ) {
                 data {
                   websiteAd {
@@ -105,7 +117,16 @@ class SyncInitialProperties
                     }
                     feature
                     standard
+                    withholdAddress
                   }
+                }
+              }
+              marketingDocuments {
+                name
+                documents {
+                  file
+                  availableOnline
+                  url
                 }
               }
             }
@@ -223,7 +244,7 @@ class SyncInitialProperties
             }
             providerCampaigns(
               pagination: { perPage: 1, page: 1 }
-              filters: { provider: WEBSITE }
+              filters: { provider: OFFICE_WEBSITE }
             ) {
               data {
                 websiteAd {
@@ -246,7 +267,16 @@ class SyncInitialProperties
                   }
                   feature
                   standard
+                  withholdAddress
                 }
+              }
+            }
+            marketingDocuments {
+              name
+              documents {
+                file
+                availableOnline
+                url
               }
             }
           }
@@ -256,6 +286,10 @@ class SyncInitialProperties
     JSON;
     $result = query($query, [], get_option('utogi_marketing-api-key'));
     $activeCampaigns = $result['data']['marketing']['campaigns']['data'];
+
+    if (count($activeCampaigns) === 0) {
+      $this->trashPropertyWhenCampaignIsDeleted($id);
+    }
 
     foreach ($activeCampaigns as $activeCampaign) {
       $this->syncProperty($activeCampaign);
@@ -268,7 +302,7 @@ class SyncInitialProperties
     if (!$websiteAd) {
       return;
     }
-    if (!in_array($activeCampaign['status'], ['ON_THE_MARKET', 'UNDER_CONTRACT', 'SETTLING', 'SOLD', 'WITHDRAWN', 'ARCHIVED'])) {
+    if (!in_array($activeCampaign['status'], ['ON_THE_MARKET', 'UNDER_CONTRACT', 'SETTLING', 'SOLD', 'WITHDRAWN', 'WITHDRAWN_FROM_ON_THE_MARKET', 'WITHDRAWN_FROM_SOLD', 'WITHDRAWN_FROM_UNDER_CONTRACT', 'ARCHIVED'])) {
       return;
     }
 
@@ -280,10 +314,14 @@ class SyncInitialProperties
 
     $status = 'activated';
     $stage = 'listing';
+    $withholdAddress = false;
 
     if (!$websiteAd['standard']) {
       $status = 'withdrawn';
       $stage = 'withdrawn';
+    }
+    if($websiteAd['withholdAddress']) {
+      $withholdAddress = $websiteAd['withholdAddress'];
     }
 
     if (in_array($activeCampaign['status'], ['WITHDRAWN_FROM_ON_THE_MARKET', 'WITHDRAWN_FROM_SOLD', 'WITHDRAWN_FROM_UNDER_CONTRACT'])) {
@@ -306,6 +344,7 @@ class SyncInitialProperties
     update_post_meta($id, 'utogiId', $activeCampaign['referenceId']);
     update_post_meta($id, 'utogiInternalId', $activeCampaign['id']);
     update_post_meta($id, 'propertyTitle', $title);
+    update_post_meta($id, 'withholdAddress', $withholdAddress);
 
     update_post_meta($id, 'stage', $stage);
     update_post_meta($id, 'status', $status);
@@ -332,12 +371,14 @@ class SyncInitialProperties
     }
 
     if (($activeCampaign['status'] == 'sold') || !$websiteAd['feature']) {
-      if (tag_exists('featured'))
+      if (term_exists('featured'))
         wp_remove_object_terms($id, 'featured', 'post_tag');
     }
     $this->syncPriceDetails($id, $activeCampaign);
-    $this->syncAddress($id, $activeCampaign);
+    $this->syncAddress($id, $activeCampaign, $withholdAddress);
     $this->syncPropertyInformation($id, $activeCampaign['property']);
+    $this->syncDocuments($id, $activeCampaign['marketingDocuments'], $title, $activeCampaign['id']);
+
 
     $this->syncAgents($activeCampaign, $id);
     $this->syncImages($activeCampaign, $id);
@@ -423,7 +464,7 @@ class SyncInitialProperties
       if (!$heading['provider']) {
         $defaultTitle = $heading['content'];
       }
-      if ($heading['provider'] === 'WEBSITE') {
+      if ($heading['provider'] === 'OFFICE_WEBSITE') {
         $title = $heading['content'];
       }
     }
@@ -432,7 +473,7 @@ class SyncInitialProperties
       if (!$address['provider']) {
         $defaultWebAddress = $address['content'];
       }
-      if ($address['provider'] === 'WEBSITE') {
+      if ($address['provider'] === 'OFFICE_WEBSITE') {
         $webAddress = $address['content'];
       }
     }
@@ -441,7 +482,7 @@ class SyncInitialProperties
       if (!$body['provider']) {
         $defaultDescription = nl2br($body['content']);
       }
-      if ($body['provider'] === 'WEBSITE') {
+      if ($body['provider'] === 'OFFICE_WEBSITE') {
         $defaultDescription = $body['content'];
       }
     }
@@ -473,13 +514,40 @@ class SyncInitialProperties
     }
   }
 
-  private function syncAddress($id, $activeCampaign): void
+  private function syncDocuments($id, $documents, $title, $campaign)
+  {
+    if (count($documents) === 0) {
+      return;
+    }
+    $available = array();
+    foreach ($documents as $document) {
+      $list = array();
+      foreach ($document['documents'] as $file) {
+        if ($file['availableOnline']) {
+          $current = new Document();
+          $current->name = $file['file'];
+          $current->url = str_replace('api/graphql', '', getUtogiAPIURL()) . 'marketing/campaigns/document/download?file=' . urlencode($file['url']) . '&name=' . urlencode($file['file']) . '&campaign=' . $campaign . '&reference=';
+          $list[] = $current;
+        }
+      }
+      if (!empty($list)) {
+        $group = new DocumentGroup();
+        $group->name = $document['name'] ?? 'Other';
+        $group->documents = $list;
+        $available[] = $group;
+      }
+    }
+    update_post_meta($id, 'documents', $available);
+    update_post_meta($id, 'allDocuments', str_replace('api/graphql', '', getUtogiAPIURL()) . 'marketing/campaigns/documents/download?name=' . urlencode($title) . '&campaign=' . $campaign . '&reference=');
+  }
+
+  private function syncAddress($id, $activeCampaign, $withholdAddress): void
   {
     $address = $activeCampaign['providerCampaigns']['data'][0]['websiteAd']['propertyDetails'];
 
     // General
-    update_post_meta($id, 'streetNumber', $address['streetNumber']);
-    update_post_meta($id, 'unit', $address['unit']);
+    update_post_meta($id, 'streetNumber', $withholdAddress ? null : $address['streetNumber']);
+    update_post_meta($id, 'unit', $withholdAddress ? null : $address['unit']);
     update_post_meta($id, 'streetName', $address['streetName']);
     update_post_meta($id, 'suburb', $address['suburb']);
     update_post_meta($id, 'region', $address['region']);
@@ -489,7 +557,11 @@ class SyncInitialProperties
     update_post_meta($id, 'propertyType', $activeCampaign['property']['type']);
 
     $fullAddressNumber = $address['unit'] ? $address['unit'] . '/' . $address['streetNumber'] : $address['streetNumber'];
-    $fullAddress = $fullAddressNumber . ' ' . $address['streetName'] . ', ' . $address['suburb'] . ', ' . $address['city'];
+    if($withholdAddress) {
+      $fullAddress = $address['streetName'] . ', ' . $address['suburb'] . ', ' . $address['city'];
+    }else {
+      $fullAddress = $fullAddressNumber . ' ' . $address['streetName'] . ', ' . $address['suburb'] . ', ' . $address['city'];
+    }
 
     update_post_meta($id, 'address', $fullAddress);
   }
@@ -535,6 +607,25 @@ class SyncInitialProperties
       update_post_meta($id, 'openhomes', implode(',', $formattedOpenHomes));
     } else {
       update_post_meta($id, 'openhomes', '');
+    }
+  }
+
+  private function trashPropertyWhenCampaignIsDeleted($campaign) {
+    $id = null;
+    $args = [
+      'posts_per_page' => 1,
+      'post_type' => 'property',
+      'meta_key' => 'utogiInternalId',
+      'meta_value' => $campaign,
+      'post_status' => ['publish'],
+    ];
+    // Run the query
+    $existingProperty = new WP_Query($args);
+    if ($existingProperty->have_posts()) {
+      while ($existingProperty->have_posts()) {
+        $existingProperty->the_post();
+        wp_trash_post($existingProperty->post->ID);
+      }
     }
   }
 
