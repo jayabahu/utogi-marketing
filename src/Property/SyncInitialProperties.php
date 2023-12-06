@@ -438,8 +438,10 @@ class SyncInitialProperties
 
     if (!empty($featureImages)) {
       $featureImage = $featureImages[0];
-    } else {
+    } else if (!empty($gallery)) {
       $featureImage = $gallery[0];
+    } else {
+      $featureImage = '';
     }
 
     update_post_meta($id, 'featuredImages', implode(',', $featureImages));

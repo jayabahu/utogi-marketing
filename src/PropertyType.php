@@ -31,12 +31,12 @@ class PropertyType
                  'create_posts' => 'do_not_allow',
              ],*/
         ];
-        register_post_type('utogi_properties', $args);
+        register_post_type('property', $args);
     }
 
     public function initCustomField()
     {
-        add_meta_box('utogi_property_details', __('Property Details', 'utogi_property_details'), [$this, 'customFieldView'], 'utogi_properties');
+        add_meta_box('utogi_property_details', __('Property Details', 'utogi_property_details'), [$this, 'customFieldView'], 'property');
     }
 
     public function customFieldView($post)

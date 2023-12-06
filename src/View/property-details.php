@@ -18,6 +18,11 @@
                      <input id="utogiId" type="text" name="utogiId" disabled
                             value="<?php echo esc_attr(get_post_meta(get_the_ID(), 'utogiId', true)); ?>">
               </div>
+              <div class="meta-options property_details_field">
+                     <label for="utogiId">Status</label>
+                     <input id="utogiId" type="text" name="utogiId" disabled
+                            value="<?php echo esc_attr(get_post_meta(get_the_ID(), 'status', true)); ?>">
+              </div>
        </section>
 
        <h3>Pricing</h3>
@@ -25,7 +30,7 @@
               <div class="meta-options property_details_field">
                      <label for="saleMethod">Sale Method</label>
                      <input id="saleMethod" type="text" name="saleMethod"
-                            value="<?php echo esc_attr(get_post_meta(get_the_ID(), 'saleMethod', true)); ?>">
+                            value="<?php echo esc_attr(get_post_meta(get_the_ID(), 'saleType', true)); ?>">
               </div>
               <div class="meta-options property_details_field">
                      <label for="price">Price</label>
@@ -88,7 +93,7 @@
               <div class="meta-options property_details_field">
                      <label for="type">Type</label>
                      <input id="type" type="text" name="type"
-                            value="<?php echo esc_attr(get_post_meta(get_the_ID(), 'type', true)); ?>">
+                            value="<?php echo esc_attr(get_post_meta(get_the_ID(), 'propertyType', true)); ?>">
               </div>
 
        </section>
@@ -108,7 +113,7 @@
               <div class="meta-options property_details_field">
                      <label for="livingRooms">Living Rooms</label>
                      <input id="livingRooms" type="text" name="livingRooms"
-                            value="<?php echo esc_attr(get_post_meta(get_the_ID(), 'livingRooms', true)); ?>">
+                            value="<?php echo esc_attr(get_post_meta(get_the_ID(), 'livingrooms', true)); ?>">
               </div>
               <div class="meta-options property_details_field">
                      <label for="bathrooms">Bathrooms</label>
@@ -128,7 +133,7 @@
               <div class="meta-options property_details_field">
                      <label for="dining">Dining</label>
                      <input id="dining" type="text" name="dining"
-                            value="<?php echo esc_attr(get_post_meta(get_the_ID(), 'dining', true)); ?>">
+                            value="<?php echo esc_attr(get_post_meta(get_the_ID(), 'diningrooms', true)); ?>">
               </div>
               <div class="meta-options property_details_field">
                      <label for="garages">Garages</label>
@@ -157,7 +162,7 @@
               <div class="meta-options property_details_field">
                      <label for="images">Images</label>
                      <input id="images" type="text" name="images"
-                            value="<?php echo esc_attr(get_post_meta(get_the_ID(), 'images', true)); ?>">
+                            value="<?php echo esc_attr(get_post_meta(get_the_ID(), 'galleryImages', true)); ?>">
               </div>
        </section>
 
